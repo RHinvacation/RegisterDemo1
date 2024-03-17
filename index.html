@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue@3.0.11/dist/vue.global.prod.js"></script>
+    <link rel="stylesheet" href="./styles/register.css">
+    <title>用户注册</title>
+</head>
+
+<body>
+    <div id="app">
+        <h3>用户注册</h3>
+        <form>
+            用户名：<input type="text" v-model="username" placeholder="请输入用户名"><br>
+            密码：<input type="password" v-model="password" @input="validatePassword" placeholder="请输入密码">
+                <span style="color: red; font-size: 12px; " v-if="passwordError">{{ passwordError }}</span>
+                <span style="color: green; font-size: 12px; " v-if="fitPassword">{{ fitPassword }}</span><br>
+            邮箱：<input type="text" v-model="email" placeholder="请输入邮箱"><br>
+            所在地区：
+            <select v-model="area">
+                <option disabled value="">请选择所在地区</option>
+                <option value="广州">广州</option>
+                <option value="深圳">深圳</option>
+                <option value="佛山">佛山</option>
+            </select><br>
+            <div class="hobbies-button">
+                爱好：<span v-for="hobby in hobbies">
+                    <input type="checkbox" :id="hobby" :value="hobby" v-model="selectedHobbies">
+                    <label :for="hobby">{{ hobby }}</label>&nbsp;&nbsp;
+                </span>
+            </div>
+            <div>
+                性别：<input type="radio" v-model="sex" value="男">男&nbsp;&nbsp;
+                <input type="radio" v-model="sex" value="女">女
+            </div>
+            <div class="button">
+                <input type="button" value="提交" @click="submit">
+                <input type="button" value="重置" @click="reset">
+            </div>
+        </form>
+        <!-- <div v-if="submitted">
+            <hr>
+            <h3>用户信息：</h3>
+            <p>用户名：{{ username }}</p>
+            <p>密码：{{ password }}</p>
+            <p>邮箱：{{ email }}</p>
+            <p>所在地区：{{ area }}</p>
+            <p>爱好：{{ selectedHobbies.join(', ') }}</p>
+            <p>性别：{{ sex }}</p>
+        </div> -->
+        <div v-if="submitted">
+            <hr>
+            <h4>用户信息：</h4>
+            <table>
+                <tr>
+                    <td>用户名：</td>
+                    <td>{{ username }}</td>
+                </tr>
+                <tr>
+                    <td>密码：</td>
+                    <td>{{ password }}</td>
+                </tr>
+                <tr>
+                    <td>邮箱：</td>
+                    <td>{{ email }}</td>
+                </tr>
+                <tr>
+                    <td>所在地区：</td>
+                    <td>{{ area }}</td>
+                </tr>
+                <tr>
+                    <td>爱好：</td>
+                    <td>{{ selectedHobbies.join(', ') }}</td>
+                </tr>
+                <tr>
+                    <td>性别：</td>
+                    <td>{{ sex }}</td>
+                </tr>
+            </table>
+        </div>
+
+    </div>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    username: '',
+                    password: '',
+                    email: '',
+                    area: '',
+                    hobbies: ['打球', '游泳', '电影', '购物', '旅游', '阅读'],
+                    selectedHobbies: [],
+                    sex: '',
+                    submitted: false,
+                    passwordError: '',
+                    fitPassword: ''
+                }
+            },
+            methods: {
+                validatePassword() {
+                    if (this.password.length < 6 || this.password.length > 10) {
+                        this.passwordError = "密码长度应为6~10位"
+                        this.fitPassword = ""
+                    } else {
+                        this.passwordError = ""
+                        this.fitPassword = "密码长度符合要求"
+                    }
+                },
+                // submit() {
+                //     if (this.fitPassword === "密码长度符合要求") {
+                //         this.submitted = true
+                //         alert("提交成功")
+                //     }else{
+                //         alert("提交失败")
+                //     }
+                // },
+                // submit() {
+                //     if (this.username && this.password && this.email && this.area && this.selectedHobbies.length > 0 && this.sex && this.fitPassword === "密码长度符合要求") {
+                //         this.submitted = true
+                //         alert("提交成功")
+                //     } else {
+                //         alert("请填写完整信息")
+                //     }
+                // },
+                // submit() {
+                //     if (this.isFormValid()) {
+                //         this.submitted = true
+                //         alert("提交成功")
+                //     } else if (this.fitPassword != "密码长度符合要求"  && this.fitPassword !="" || this.passwordError != "") {
+                //         alert("密码长度应为6~10位，请重新输入")
+                //     } else {
+                //         alert("请填写完整信息")
+                //     }
+                // },
+                // isFormValid() {
+                //     return (
+                //         this.username &&
+                //         this.password &&
+                //         this.email &&
+                //         this.area &&
+                //         this.selectedHobbies.length > 0 &&
+                //         this.sex &&
+                //         this.fitPassword === "密码长度符合要求"
+                //     )
+                // },
+                submit() {
+                    if (this.isPasswordInvalid()) {
+                        alert("密码长度应为6~10位，请重新输入")
+                    } else if (this.isFormIncomplete()) {
+                        alert("请填写完整信息")
+                    } else {
+                        this.submitted = true
+                        alert("提交成功")
+                    }
+                },
+                isPasswordInvalid() {
+                    return this.fitPassword !== "密码长度符合要求" && this.fitPassword !== "" || this.passwordError !== ""
+                },
+                isFormIncomplete() {
+                    return !(
+                        this.username &&
+                        this.password &&
+                        this.email &&
+                        this.area &&
+                        this.selectedHobbies.length > 0 &&
+                        this.sex
+                    )
+                },
+                reset() {
+                    alert("重置成功")
+                    this.username = ''
+                    this.password = ''
+                    this.email = ''
+                    this.area = ''
+                    this.selectedHobbies = []
+                    this.sex = ''
+                    this.submitted = false
+                    this.passwordError = ''
+                    this.fitPassword = ''
+                }
+            }
+        })
+        app.mount('#app');
+    </script>
+</body>
+
+</html>
